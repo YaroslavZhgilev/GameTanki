@@ -14,6 +14,7 @@ int main() {  //Создаём окно
  
 	 Sprite herosprite;//создаем объект Sprite(спрайт)  
 	 herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)  
+	 herosprite.setTextureRect(IntRect(0, 192, 96, 96));//получили нужный прямоугольник 
 	 herosprite.setPosition(50, 25);//задаем начальные координаты появления спрайта 
  
  while (window.isOpen())  //Пока окно открыто  
