@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp> 
 #include <iostream>
 #include <cmath>
+#include <sstream>
 #include "map.h" //подключили код с картой 
  
 using namespace sf;//включаем пространство имен sf, чтобы постоянно не писать 
@@ -9,6 +10,7 @@ using namespace sf;//включаем пространство имен sf, чтобы постоянно не писать
 class Player { // класс Игрока 
 public:  float x, y, w, h, dx, dy, speed; //координаты игрока х и у, высота и ширина,        
 		 //ускорение (по х и по у), сама скорость  
+		 int playerScore;//новая переменная, хранящая очки игрока 
 		 int dir; //направление (direction) движения игрока  
 		 std::string File; //файл с расширением  
 		 Image image;//сфмл изображение  
@@ -17,6 +19,7 @@ public:  float x, y, w, h, dx, dy, speed; //координаты игрока х и у, высота и ши
 		 //Конструктор с параметрами для класса Player. При создании объекта класса мы будем задавать 
 		 //имя файла, координату Х и У, ширину и высоту 
 		 Player(std::string F, float X, float Y, float W, float H){
+			 dir = 0; speed = 0; playerScore = 0; 
 			 File = F; //имя файла+расширение  
 			 w = W; 
 			 h = H; //высота и ширина  
@@ -89,7 +92,7 @@ public:  float x, y, w, h, dx, dy, speed; //координаты игрока х и у, высота и ши
 					 }     
 					 if (TileMap[i][j] == 's') { 
 						 //если символ равен 's' (камень)     
-						 x = 300; y = 300;//какое-то действие...телепортация героя     
+						 playerScore++;//какое-то действие     
 						 TileMap[i][j] = ' ';//убираем камень    
 					 } 
 				 }
@@ -101,6 +104,13 @@ int main() {  //Создаём окно
 	sf::VideoMode desktop = sf::VideoMode::getDesktopMode();  
 	sf::RenderWindow window(sf::VideoMode(640, 480, desktop.bitsPerPixel), "Lesson 6"); 
 
+
+Font font;//шрифт   
+font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта  
+Text text("", font, 20);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);
+//сам объект текст (не строка)  
+text.setColor(Color::Red);//покрасили текст в красный. если убрать эту строку, то по умолчанию он белый  
+text.setStyle(Text::Bold);//жирный текст.
 	Image map_image;//объект изображения для карты 
 	map_image.loadFromFile("images/map.png");//загружаем файл для карты 
 	Texture map;//текстура карты 
@@ -195,6 +205,12 @@ int main() {  //Создаём окно
  
   window.draw(s_map);//рисуем квадратики на экран 
 	  }
+
+	  std::ostringstream playerScoreString;  // объявили переменную  
+	  playerScoreString << p.playerScore;//занесли в нее число очков, то есть формируем строку  
+	  text.setString("Собрано камней:" + playerScoreString.str());//задаем строку тексту и       // вызываем сформированную выше строку методом .str() 
+	  text.setPosition(50, 50);//задаем позицию текста, отступая от центра камеры  
+	  window.draw(text);//рисую этот текст
 
   window.draw(p.sprite);//рисуем объект   
   window.display(); //Показываем объект на экране 
