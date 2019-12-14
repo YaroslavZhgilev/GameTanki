@@ -3,6 +3,7 @@
 #include <cmath>
 #include <sstream>
 #include "map.h" //подключили код с картой 
+#include <list>
  
 using namespace sf;//включаем пространство имен sf, чтобы постоянно не писать 
 
@@ -249,6 +250,43 @@ public:
 	 } 
  } 
 };//класс Enemy закрыт
+
+////////////////////////////КЛАСС ПУЛИ//////////////////////// 
+class Bullet :public Entity{//класс пули 
+public:  int direction;//направление пули 
+		 Bullet(Image &image, float X, float Y, int W, int H, std::string  Name, int dir) :Entity(image, X, Y, W, H, Name){  
+			 x = X; //координаты пули на карте игры  
+			 y = Y;  
+			 direction = dir; //направление полета пули   
+			 speed = 0.8; 
+			 w = h = 16; //размеры изображения пули   
+			 life = true; //пуля жива 
+		 } 
+ 
+ 
+ void update(float time)  {   
+	 switch (direction)   {  
+			case 0: dx = -speed; dy = 0;   break;// state = left  
+			case 1: dx = speed; dy = 0;   break;// state = right 
+			case 2: dx = 0; dy = -speed;   break;// state = up 
+			case 3: dx = 0; dy = speed;   break;// state = down 
+	 } 
+ 
+  if (life){ // если пуля жива   
+	  x += dx*time;//само движение пули по х   
+	  y += dy*time;//по у 
+ 
+   for (int i = y / 32; i < (y + h) / 32; i++)//проходимся по элементам карты    
+	   for (int j = x / 32; j < (x + w) / 32; j++)
+	   {
+		   if (TileMap[i][j] == '0')//если элемент наш тайлик земли, то     
+			   life = false;// то пуля умирает     
+				   }    
+	   sprite.setPosition(x + w / 2, y + h / 2); //задается позицию пули  
+	  } 
+	} 
+ }; 
+
 int main() {
 	//Создаём окно 
 	sf::VideoMode desktop = sf::VideoMode::getDesktopMode();  
@@ -278,9 +316,26 @@ text.setStyle(Text::Bold);//жирный текст.
  
     Image easyEnemyImage; 
 	easyEnemyImage.loadFromFile("images/enemy.png"); // загружаем изображение врага 
- 
+	
+	Image BulletImage;//изображение для пули  
+	BulletImage.loadFromFile("images/bullet.png");//загрузили картинку в объект изображения 
+
     Player p(heroImage, 100, 100, 96, 96, "Player1");//объект класса игрока 
-	Enemy easyEnemy(easyEnemyImage, 150, 150, 96, 96, "EasyEnemy");//объект класса врага, простой вра
+
+	std::list<Entity*>  enemies; //список врагов  
+	std::list<Entity*>  Bullets; //список пуль
+	std::list<Entity*>::iterator it; //итератор чтобы проходить по элементам списка 
+ 
+ const int ENEMY_COUNT = 3; //максимальное количество врагов в игре  
+ int enemiesCount = 0;      //текущее количество врагов в игре 
+ 
+ //Заполняем список объектами врагами  
+ for (int i = 0; i < ENEMY_COUNT; i++)  {
+	 float xr = 150 + rand() % 500; //случайная координата врага на поле игры по оси “x” 
+	 float yr = 150 + rand() % 350; //случайная координата врага на поле игры по оси “y”   //создаем врагов и помещаем в список 
+	 enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy"));  
+	 enemiesCount += 1; //увеличили счётчик врагов  
+}
 
 	int createObjectForMapTimer = 0;//Переменная под время для генерирования камней 
 
@@ -306,12 +361,52 @@ text.setStyle(Text::Bold);//жирный текст.
 		 while (window.pollEvent(event))  
 			 {    
 				 if (event.type == sf::Event::Closed)    
-				 window.close();   
-			} 
+				 window.close();    
+
+		 //стреляем по нажатию клавиши "P"   
+		 if (event.type == sf::Event::KeyPressed)
+		 {
+			 if (event.key.code == sf::Keyboard::P)
+			 {
+				 Bullets.push_back(new Bullet(BulletImage, p.x, p.y, 16, 16, "Bullet", p.state));    
+			 } 
+		 }   
+ }
 
 		 p.update(time); //оживляем объект “p” класса “Player” с помощью времени sfml, 
 		 // передавая время в качестве параметра функции update.
-		 easyEnemy.update(time);
+		 
+		 //оживляем врагов  
+		 for (it = enemies.begin(); it != enemies.end(); it++)   {  
+			 (*it)->update(time); //запускаем метод update() 
+		 } 
+ 
+
+		 //оживляем пули   
+		 for (it = Bullets.begin(); it != Bullets.end(); it++)   {
+			 (*it)->update(time); //запускаем метод update()   
+		 } 
+ 
+  //Проверяем список на наличие "мертвых" пуль и удаляем их 
+		 for (it = Bullets.begin(); it != Bullets.end(); )//говорим что проходимся от начала до конца 
+		 {
+			 // если этот объект мертв, то удаляем его   
+			 if ((*it)-> life == false) { it = Bullets.erase(it); }    
+			 else  it++;//и идем курсором (итератором) к след объекту.    
+} 
+//Проверка пересечения игрока с врагами 
+		 //Если пересечение произошло, то "health = 0", игрок обездвижевается и  
+		 //выводится сообщение "you are lose" 
+		 if (p.life == true){//если игрок жив 
+				for (it = enemies.begin(); it != enemies.end(); it++){
+					//бежим по списку врагов   
+					if ((p.getRect().intersects((*it)->getRect())) && ((*it)->name == "EasyEnemy")){
+						p.health = 0;
+						std::cout << "you are lose"; 
+					} 
+				}   
+ }
+
   window.clear(); //Очищаем экран   
 
   /////////////////////////////Рисуем карту///////////////////// 
@@ -337,7 +432,15 @@ text.setStyle(Text::Bold);//жирный текст.
 	  window.draw(text);//рисуем этот текст
 
   window.draw(p.sprite);//рисуем объект 
-  window.draw(easyEnemy.sprite);//рисуем спрайт объекта “p” класса “Player”
+ //рисуем врагов   
+  for (it = enemies.begin(); it != enemies.end(); it++){
+	  window.draw((*it)->sprite); //рисуем enemies объекты   
+ } 
+  //рисуем пули  
+  for (it = Bullets.begin(); it != Bullets.end(); it++)   {   
+	  if ((*it)->life) //если пули живы    
+		  window.draw((*it)->sprite); //рисуем объекты  
+ }
 
   window.display(); //Показываем объект на экране 
 	 } 
