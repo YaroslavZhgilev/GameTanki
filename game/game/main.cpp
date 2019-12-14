@@ -6,40 +6,54 @@
  
 using namespace sf;//включаем пространство имен sf, чтобы постоянно не писать 
 
-////////////////////////////////////////////////////КЛАСС ИГРОКА//////////////////////// 
-class Player { // класс Игрока
-private: float x,y;
-public:  float w, h, dx, dy, speed; //координаты игрока х и у, высота и ширина,        
-		 //ускорение (по х и по у), сама скорость  
-		 float CurrentFrame;//хранит текущий кадр 
-		 int playerScore,health;//новая переменная, хранящая очки игр //направление (direction) движения игрока
-		 bool life;
-		 enum {left, right, up, down, stay} state;//добавляем тип перечисления - состояние объекта
-		 std::string File; //файл с расширением  
-		 Image image;//сфмл изображение  
-		 Texture texture;//сфмл текстура  
+class Entity { 
+public:  enum { left, right, up, down, stay} state;// тип перечисления - состояние объекта 
+		 float dx, dy, x, y, speed, moveTimer;//добавили переменную таймер для будущих целей  
+		 int w, h, health; //переменная “health”, хранящая жизни игрока  
+		 bool life; //переменная “life” жизнь, логическая  
+		 Texture texture;//сфмл текстура 
 		 Sprite sprite;//сфмл спрайт 
-		 //Конструктор с параметрами для класса Player. При создании объекта класса мы будем задавать 
-		 //имя файла, координату Х и У, ширину и высоту 
+		 float CurrentFrame;//хранит текущий кадр 
+		 std::string name;//враги могут быть разные, врагов можно различать по именам  //каждому можно дать свое действие в update() в зависимости от имени 
+ 
+ Entity(Image &image, float X, float Y, int W, int H, std::string Name){  
+	 x = X; y = Y; //координата появления спрайта  
+	 w = W; h = H; 
+	 name = Name;  
+	 moveTimer = 0;   
+	 dx = 0; dy = 0;  
+	 speed = 0;
+	 CurrentFrame = 0;  
+	 health = 100;
+	 life = true; //инициализировали логическую переменную жизни, герой жив 
+	 texture.loadFromImage(image); //заносим наше изображение в текстуру 
+	 sprite.setTexture(texture); //заливаем спрайт текстурой 
+ } 
+ 
+ FloatRect getRect(){//метод получения прямоугольника. его коорд, размеры (шир,высот). 
+	 FloatRect FR(x, y, w, h); // переменная FR типа FloatRect 
+	 return FR;   //return FloatRect(x, y, w, h);   //Тип данных (класс) "sf::FloatRect" позволяет хранить четыре координаты прямоугольника 
+	 //в нашей игре это координаты текущего расположения тайла на карте   
+	 //далее это позволит спросить, есть ли ещё какой-либо тайл на этом месте  
+	 //эта ф-ция нужна для проверки пересечений   
+ } 
+ 
+ virtual void update(float time) = 0; 
+};
+////////////////////////////////////////////////////КЛАСС ИГРОКА//////////////////////// 
+class Player :public Entity { // класс Игрока
+public: 
+		 int playerScore;//новая переменная, хранящая очки игр //направление (direction) движения игрока
 
-		 Player(std::string F, float X, float Y, float W, float H){
-			 dx=0; dy=0; speed = 0; playerScore = 0;health=100;
-			 CurrentFrame=0;
-			 state=stay;
-			 life=true;
-			 File = F; //имя файла+расширение  
-			 w = W; 
-			 h = H; //высота и ширина  
-			 image.loadFromFile("images/" + File);//загружаем в image изображение, вместо File  
-			 //передадим то, что пропишем при создании объекта. В нашем случае это "hero.png". Получится  
-			 //запись, идентичная image.loadFromFile("images/hero/png");  
-			 image.createMaskFromColor(Color(41, 33, 59)); //убираем ненужный темно-синий цвет 
-			 texture.loadFromImage(image); //заносим наше изображение в текстуру  
-			 sprite.setTexture(texture); //заливаем спрайт текстурой  
-			 x = X; 
-			 y = Y; //координата появления спрайта                  
-			 sprite.setTextureRect(IntRect(0, 0, w, h)); //Задаем спрайту один прямоугольник для  //вывода одного льва. IntRect – для приведения типов 
-}
+		 Player(Image &image, float X, float Y, int W, int H, std::string Name) :Entity(image, X, Y, W, H, Name){ 
+			 playerScore = 0;
+			 state = stay;
+			 if (name == "Player1"){   
+				 //Задаем спрайту один прямоугольник для   
+				 //вывода одного игрока. IntRect – для приведения типов   
+				 sprite.setTextureRect(IntRect(0, 0, w, h));  
+			 }  
+		 }
 
 		 void control(){    
 				if (Keyboard::isKeyPressed(Keyboard::Left)) {     
@@ -143,20 +157,102 @@ public:  float w, h, dx, dy, speed; //координаты игрока х и у, высота и ширина,
 				 }
 		 }
 
-		 FloatRect getRect(){
-			 //метод получения прямоугольника. его коорд, размеры (шир,высот). 
-			 FloatRect FR(x, y, w, h); // переменная FR типа FloatRect  
-			 return FR;  //Тип данных (класс) "sf::FloatRect" позволяет хранить четыре координаты прямоугольника 
-			 //в нашей игре это координаты текущего расположения тайла на карте 
-			 //далее это позволит спросить, есть ли ещё какой-либо тайл на этом месте   
-			 //эта ф-ция нужна для проверки пересечений   
-		 }
 };
-int main() {  //Создаём окно   
-	Player p("hero.png", 250, 250, 96.0, 96.0); //создаем объект “p” класса “Player”, //задаем "hero.png" как имя файла+расширение, далее координата Х,У, ширина, высота.
 
+////////////////////////////КЛАСС ВРАГА//////////////////////// 
+class Enemy :public Entity{ 
+public:  
+	int direction;//направление движения врага 
+	
+	Enemy(Image &image, float X, float Y, int W, int H, std::string Name) :Entity(image, X, Y, W, H, Name){ 
+		if (name == "EasyEnemy"){ 
+			//Задаем спрайту один прямоугольник для   
+			//вывода одного игрока. IntRect – для приведения типов  
+			sprite.setTextureRect(IntRect(0, 0, w, h));   
+			direction = rand() % (3); //Направление движения врага задаём случайным образом 
+			//через генератор случайных чисел 
+			speed = 0.1;//даем скорость.этот объект всегда двигается   
+			dx = speed;  
+		} 
+	} 
+ 
+ void checkCollisionWithMap(float Dx, float Dy)//ф-ция проверки столкновений с картой 
+ {  
+	 for (int i = y / 32; i < (y + h) / 32; i++)//проходимся по элементам карты 
+		 for (int j = x / 32; j<(x + w) / 32; j++){
+			 if (TileMap[i][j] == '0')//если элемент - тайлик земли   
+				{      
+					if (Dy > 0) {
+						y = i * 32 - h;  dy = -0.1; 
+						direction = rand() % (3); //Направление движения врага
+						}//по Y   
+					if (Dy < 0) {   
+						y = i * 32 + 32; dy = 0.1;   
+						direction = rand() % (3);//Направление движения врага  
+						}//столкновение с верхними краями  
+					if (Dx > 0) {  
+						x = j * 32 - w; dx = -0.1;  
+						direction = rand() % (3);//Направление движения врага  
+						}//с правым краем карты  
+					if (Dx < 0) { 
+						x = j * 32 + 32; dx = 0.1;   
+						direction = rand() % (3); //Направление движения врага  
+						}// с левым краем карты     
+			 }
+		 }
+ } 
+ 
+ void update(float time)  { 
+	 if (name == "EasyEnemy"){//для персонажа с таким именем логика будет такой 
+ 
+	  if (life) {//проверяем, жив ли герой  
+		  switch (direction)//делаются различные действия в зависимости от состояния
+		  { 
+			case 0:{//состояние идти вправо  
+				dx = speed;  
+				CurrentFrame += 0.005*time;  
+				if (CurrentFrame > 3) CurrentFrame -= 3;   
+				sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 192, 96, 96)); 
+				break;  
+				   } 
+			case 1:{//состояние идти влево 
+				dx = -speed;   
+				CurrentFrame += 0.005*time; 
+				if (CurrentFrame > 3) CurrentFrame -= 3; 
+				sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 96, 96, 96)); 
+				break; 
+				   }  
+			case 2:{//идти вверх   
+				dy = -speed;  
+				CurrentFrame += 0.005*time;  
+				if (CurrentFrame > 3) CurrentFrame -= 3; 
+				sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 288, 96, 96));  
+				break; 
+				   }
+			case 3:{//идти вниз   
+				dy = speed; 
+				CurrentFrame += 0.005*time;  
+				if (CurrentFrame > 3) CurrentFrame -= 3;
+				sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96)); 
+				break; 
+				   } 
+		  } 
+ 
+  x += dx*time; //движение по “X”   
+  checkCollisionWithMap(dx, 0);//обрабатываем столкновение по Х  
+  y += dy*time; //движение по “Y”  
+  checkCollisionWithMap(0, dy);//обрабатываем столкновение по Y 
+  sprite.setPosition(x, y); //спрайт в позиции (x, y). 
+ 
+  if (health <= 0){ life = false; }//если жизней меньше 0, либо равно 0, то умираем  
+	  } 
+	 } 
+ } 
+};//класс Enemy закрыт
+int main() {
+	//Создаём окно 
 	sf::VideoMode desktop = sf::VideoMode::getDesktopMode();  
-	sf::RenderWindow window(sf::VideoMode(640, 480, desktop.bitsPerPixel), "Lesson 6"); 
+	sf::RenderWindow window(sf::VideoMode(800, 640, desktop.bitsPerPixel), "Lesson 6"); 
 
 
 Font font;//шрифт   
@@ -165,6 +261,7 @@ Text text("", font, 20);//создаем объект текст. закидываем в объект текст строку
 //сам объект текст (не строка)  
 text.setColor(Color::Red);//покрасили текст в красный. если убрать эту строку, то по умолчанию он белый  
 text.setStyle(Text::Bold);//жирный текст.
+
 	Image map_image;//объект изображения для карты 
 	map_image.loadFromFile("images/map_new.png");//загружаем файл для карты 
 	Texture map;//текстура карты 
@@ -176,6 +273,15 @@ text.setStyle(Text::Bold);//жирный текст.
 	Clock gameTimeClock;//переменная игрового времени, будем здесь хранить время игры  
 	int gameTime = 0;//объявили игровое время, инициализировали.
  
+	Image heroImage;  
+	heroImage.loadFromFile("images/hero.png"); // загружаем изображение игрока 
+ 
+    Image easyEnemyImage; 
+	easyEnemyImage.loadFromFile("images/enemy.png"); // загружаем изображение врага 
+ 
+    Player p(heroImage, 100, 100, 96, 96, "Player1");//объект класса игрока 
+	Enemy easyEnemy(easyEnemyImage, 150, 150, 96, 96, "EasyEnemy");//объект класса врага, простой вра
+
 	int createObjectForMapTimer = 0;//Переменная под время для генерирования камней 
 
  while (window.isOpen())  //Пока окно открыто  
@@ -191,7 +297,7 @@ text.setStyle(Text::Bold);//жирный текст.
 		time = time / 800; //скорость игры  
 
 		createObjectForMapTimer += time;//наращиваем таймер   
-		if (createObjectForMapTimer>100){    
+		if (createObjectForMapTimer>3000){    
 			randomMapGenerate();//генерация  камней   
 			createObjectForMapTimer = 0;//обнуляем таймер   
  }
@@ -204,7 +310,8 @@ text.setStyle(Text::Bold);//жирный текст.
 			} 
 
 		 p.update(time); //оживляем объект “p” класса “Player” с помощью времени sfml, 
-		 // передавая время в качестве параметра функции update. 
+		 // передавая время в качестве параметра функции update.
+		 easyEnemy.update(time);
   window.clear(); //Очищаем экран   
 
   /////////////////////////////Рисуем карту///////////////////// 
@@ -229,7 +336,9 @@ text.setStyle(Text::Bold);//жирный текст.
 	  text.setPosition(50, 50);//задаем позицию текста 
 	  window.draw(text);//рисуем этот текст
 
-  window.draw(p.sprite);//рисуем объект   
+  window.draw(p.sprite);//рисуем объект 
+  window.draw(easyEnemy.sprite);//рисуем спрайт объекта “p” класса “Player”
+
   window.display(); //Показываем объект на экране 
 	 } 
  
