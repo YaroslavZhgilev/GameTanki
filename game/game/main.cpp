@@ -88,14 +88,14 @@ public:
 					dx = speed;    
 					CurrentFrame += 0.005*time;   
 					if (CurrentFrame > 3) CurrentFrame -= 3;
-					sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 192, 96, 96)); 
+					sprite.setTextureRect(IntRect(60 * int(CurrentFrame), 0, 50, 50)); 
 				    break; 
 						  }  
 				case left:{//состо€ние идти влево   
 					dx = -speed;  
 					CurrentFrame += 0.005*time;   
 					if (CurrentFrame > 3) CurrentFrame -= 3;   
-					sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 96, 96, 96)); 
+					sprite.setTextureRect(IntRect(65 * int(CurrentFrame),150, 50, 60)); 
 					break;   
 						  }
 
@@ -103,7 +103,7 @@ public:
 					dy = -speed;  
 					CurrentFrame += 0.005*time;    
 					if (CurrentFrame > 3) CurrentFrame -= 3; 
-					sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 288, 96, 96)); 
+					sprite.setTextureRect(IntRect(65 * int(CurrentFrame), 50, 50, 50)); 
 					break; 
 						}
 
@@ -111,7 +111,7 @@ public:
 					dy = speed;   
 					CurrentFrame += 0.005*time;  
 					if (CurrentFrame > 3) CurrentFrame -= 3;    
-					sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96));
+					sprite.setTextureRect(IntRect(60 * int(CurrentFrame), 100, 50, 60));
 					break; 
 						  }   
 				case stay:{//стоим    
@@ -198,7 +198,8 @@ public:
 					if (Dx < 0) { 
 						x = j * 32 + 32; dx = 0.1;   
 						direction = rand() % (3); //Ќаправление движени€ врага  
-						}// с левым краем карты     
+						}// с левым краем карты   
+
 			 }
 		 }
  } 
@@ -213,28 +214,28 @@ public:
 				dx = speed;  
 				CurrentFrame += 0.005*time;  
 				if (CurrentFrame > 3) CurrentFrame -= 3;   
-				sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 192, 96, 96)); 
+				sprite.setTextureRect(IntRect(60 * int(CurrentFrame), 0, 50, 50)); 
 				break;  
 				   } 
 			case 1:{//состо€ние идти влево 
 				dx = -speed;   
 				CurrentFrame += 0.005*time; 
 				if (CurrentFrame > 3) CurrentFrame -= 3; 
-				sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 96, 96, 96)); 
+				sprite.setTextureRect(IntRect(65 * int(CurrentFrame), 150, 50, 60)); 
 				break; 
 				   }  
 			case 2:{//идти вверх   
 				dy = -speed;  
 				CurrentFrame += 0.005*time;  
 				if (CurrentFrame > 3) CurrentFrame -= 3; 
-				sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 288, 96, 96));  
+				sprite.setTextureRect(IntRect(65 * int(CurrentFrame), 50, 50, 50));  
 				break; 
 				   }
 			case 3:{//идти вниз   
 				dy = speed; 
 				CurrentFrame += 0.005*time;  
 				if (CurrentFrame > 3) CurrentFrame -= 3;
-				sprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96)); 
+				sprite.setTextureRect(IntRect(60 * int(CurrentFrame), 100, 50, 60)); 
 				break; 
 				   } 
 		  } 
@@ -352,10 +353,10 @@ text.setStyle(Text::Bold);//жирный текст.
 		time = time / 800; //скорость игры  
 
 		createObjectForMapTimer += time;//наращиваем таймер   
-		if (createObjectForMapTimer>3000){    
-			randomMapGenerate();//генераци€  камней   
-			createObjectForMapTimer = 0;//обнул€ем таймер   
- }
+		//if (createObjectForMapTimer>3000){    
+			//randomMapGenerate();//генераци€  камней   
+			//createObjectForMapTimer = 0;//обнул€ем таймер   
+ //}
 		    
 		 sf::Event event;   
 		 while (window.pollEvent(event))  
@@ -412,11 +413,11 @@ text.setStyle(Text::Bold);//жирный текст.
   /////////////////////////////–исуем карту///////////////////// 
   for (int i = 0; i < HEIGHT_MAP; i++) 
 	  for (int j = 0; j < WIDTH_MAP; j++)  {  
-		  if (TileMap[i][j] == ' ')  s_map.setTextureRect(IntRect(0, 0, 32, 32)); //если        
+		  if (TileMap[i][j] == ' ')  s_map.setTextureRect(IntRect(64, 0, 32, 32)); //если        
 		  //встретили символ пробел, то рисуем 1-й квадратик   
 		  if (TileMap[i][j] == 's')  s_map.setTextureRect(IntRect(32, 0, 32, 32));//если   
 		  //встретили символ s, то рисуем 2й квадратик   
-		  if ((TileMap[i][j] == '0')) s_map.setTextureRect(IntRect(64, 0, 32, 32));//если 
+		  if ((TileMap[i][j] == '0')) s_map.setTextureRect(IntRect(0, 0, 32, 32));//если 
 		  //встретили символ 0, то рисуем 3й квадратик 
 		  if ((TileMap[i][j] == 'f')) s_map.setTextureRect(IntRect(96, 0, 32, 32));//цветок  
 		  if ((TileMap[i][j] == 'h')) s_map.setTextureRect(IntRect(128, 0, 32, 32));//сердце 
