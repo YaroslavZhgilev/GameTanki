@@ -21,7 +21,7 @@ public:  enum { left, right, up, down, stay} state;// тип перечисления - состоян
 	 x = X; y = Y; //координата появления спрайта  
 	 w = W; h = H; 
 	 name = Name;  
-	 moveTimer = 0;   
+	 moveTimer = 0; 
 	 dx = 0; dy = 0;  
 	 speed = 0;
 	 CurrentFrame = 0;  
@@ -57,6 +57,7 @@ public:
 		 }
 
 		 void control(){    
+			 if( Keyboard::isKeyPressed ){
 				if (Keyboard::isKeyPressed(Keyboard::Left)) {     
 					state = left;   
 					speed = 0.1;   
@@ -75,7 +76,8 @@ public:
 					state = down;   
 				    speed = 0.1;  
 				}  
-}
+		}
+ }
 		 void update(float time) //функция "оживления/обновления" объекта класса. Принимает в себя   
 			 //время SFML, вследствие чего работает бесконечно, давая персонажу движение. 
 		 {  
@@ -113,12 +115,7 @@ public:
 					if (CurrentFrame > 3) CurrentFrame -= 3;    
 					sprite.setTextureRect(IntRect(60 * int(CurrentFrame), 100, 50, 60));
 					break; 
-						  }   
-				case stay:{//стоим    
-					dy = speed;   
-					dx = speed;    
-				    break;     
-						  } 
+						  }    
 			 }
  
 		 x += dx*time; //движение по “X”   
@@ -172,6 +169,7 @@ public:
 			sprite.setTextureRect(IntRect(0, 0, w, h));   
 			direction = rand() % (3); //Направление движения врага задаём случайным образом 
 			//через генератор случайных чисел 
+			health=100;
 			speed = 0.1;//даем скорость.этот объект всегда двигается   
 			dx = speed;  
 		} 
@@ -326,6 +324,7 @@ text.setStyle(Text::Bold);//жирный текст.
 	std::list<Entity*>  enemies; //список врагов  
 	std::list<Entity*>  Bullets; //список пуль
 	std::list<Entity*>::iterator it; //итератор чтобы проходить по элементам списка 
+	std::list<Entity*>::iterator it2;
  
  const int ENEMY_COUNT = 3; //максимальное количество врагов в игре  
  int enemiesCount = 0;      //текущее количество врагов в игре 
@@ -376,11 +375,70 @@ text.setStyle(Text::Bold);//жирный текст.
 
 		 p.update(time); //оживляем объект “p” класса “Player” с помощью времени sfml, 
 		 // передавая время в качестве параметра функции update.
-		 
+
+		 for (it = enemies.begin(); it != enemies.end(); it++)//проходимся по эл-там списка
+		{
+			if ((*it)->getRect().intersects(p.getRect()))//если прямоугольник спрайта объекта пересекается с игроком
+			{
+				if ((*it)->name == "EasyEnemy"){//и при этом имя объекта EasyEnemy,то..
+					if ((*it)->dx>0)//если враг идет вправо
+					{
+						std::cout << "(*it)->x" << (*it)->x << "\n";//коорд игрока
+						std::cout << "p.x" << p.x << "\n\n";//коорд врага
+ 
+						(*it)->x = p.x - (*it)->w; //отталкиваем его от игрока влево (впритык)
+						(*it)->dx = 0;//останавливаем
+ 
+						std::cout << "new (*it)->x" << (*it)->x << "\n";//новая коорд врага
+						std::cout << "new p.x" << p.x << "\n\n";//новая коорд игрока (останется прежней)
+					}
+					if ((*it)->dx < 0)//если враг идет влево
+					{
+						(*it)->x = p.x + p.w; //аналогично - отталкиваем вправо
+						(*it)->dx = 0;//останавливаем
+					}
+
+					//выталкивание игрока
+					//if (p.dx < 0) { p.x = (*it)->x + (*it)->w;  }//если столкнулись с врагом и игрок идет влево то выталкиваем игрока
+					//if (p.dx > 0) { p.x = (*it)->x - p.w; }//если столкнулись с врагом и игрок идет вправо то выталкиваем игрока
+				}
+			}
+			for (it2 = enemies.begin(); it2 != enemies.end(); it2++){
+				if ((*it)->getRect() != (*it2)->getRect())//при этом это должны быть разные прямоугольники
+				if (((*it)->getRect().intersects((*it2)->getRect())) && ((*it)->name == "EasyEnemy") && ((*it2)->name == "EasyEnemy"))//если столкнулись два объекта и они враги
+				{
+					(*it)->dx *= -1;//меняем направление движения врага
+					(*it)->sprite.scale(-1, 1);//отражаем спрайт по горизонтали
+				}
+			}
+		}
+
+
+		 for (it = enemies.begin(); it != enemies.end();)//говорим что проходимся от начала до конца
+		{
+			Entity *b = *it;//для удобства, чтобы не писать (*it)->
+			//b->update(time);//вызываем ф-цию update для всех объектов (по сути для тех, кто жив)
+			if (b->life == false)	{ it = enemies.erase(it); delete b; }// если этот объект мертв, то удаляем его
+			else it++;//и идем курсором (итератором) к след объекту. так делаем со всеми объектами списка
+		}
+
+
+
+		 for (it2 = Bullets.begin(); it2 != Bullets.end(); it2++)//проходимся по эл-там списка
+		{
+			for (it = enemies.begin(); it != enemies.end(); it++){
+			if ((*it)->getRect().intersects((*it2)->getRect()))//если прямоугольник спрайта объекта пересекается с игроком
+			{    (*it2)->life=0;
+				if ((*it)->name == "EasyEnemy"){//и при этом имя объекта EasyEnemy,то..
+						(*it)->health -= 50;	//иначе враг подошел к нам сбоку и нанес урон
+					}
+				}
+			}
+		}
 		 //оживляем врагов  
 		 for (it = enemies.begin(); it != enemies.end(); it++)   {  
 			 (*it)->update(time); //запускаем метод update() 
-		 } 
+		} 
  
 
 		 //оживляем пули   
@@ -395,18 +453,25 @@ text.setStyle(Text::Bold);//жирный текст.
 			 if ((*it)-> life == false) { it = Bullets.erase(it); }    
 			 else  it++;//и идем курсором (итератором) к след объекту.    
 } 
+		 for (it = enemies.begin(); it != enemies.end(); )//говорим что проходимся от начала до конца 
+		 {
+			 // если этот объект мертв, то удаляем его   
+			 if ((*it)-> life == false) { it = enemies.erase(it); }    
+			 else  it++;//и идем курсором (итератором) к след объекту.    
+} 
+	
 //Проверка пересечения игрока с врагами 
 		 //Если пересечение произошло, то "health = 0", игрок обездвижевается и  
 		 //выводится сообщение "you are lose" 
-		 if (p.life == true){//если игрок жив 
-				for (it = enemies.begin(); it != enemies.end(); it++){
+		// if (p.life == true){//если игрок жив 
+				//for (it = enemies.begin(); it != enemies.end(); it++){
 					//бежим по списку врагов   
-					if ((p.getRect().intersects((*it)->getRect())) && ((*it)->name == "EasyEnemy")){
-						p.health = 0;
-						std::cout << "you are lose"; 
-					} 
-				}   
- }
+				//	if ((p.getRect().intersects((*it)->getRect())) && ((*it)->name == "EasyEnemy")){
+					//	p.health = 0;
+					//	std::cout << "you are lose"; 
+					//} 
+				//}   
+ //}
 
   window.clear(); //Очищаем экран   
 
