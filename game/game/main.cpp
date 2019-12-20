@@ -319,7 +319,7 @@ text.setStyle(Text::Bold);//жирный текст.
 	Image BulletImage;//изображение дл€ пули  
 	BulletImage.loadFromFile("images/bullet.png");//загрузили картинку в объект изображени€ 
 
-    Player p(heroImage, 100, 100, 96, 96, "Player1");//объект класса игрока 
+    Player p(heroImage, 50, 50, 50, 50, "Player1");//объект класса игрока 
 
 	std::list<Entity*>  enemies; //список врагов  
 	std::list<Entity*>  Bullets; //список пуль
@@ -331,9 +331,9 @@ text.setStyle(Text::Bold);//жирный текст.
  
  //«аполн€ем список объектами врагами  
  for (int i = 0; i < ENEMY_COUNT; i++)  {
-	 float xr = 150 + rand() % 500; //случайна€ координата врага на поле игры по оси УxФ 
+	 float xr = 150 + rand() % 100; //случайна€ координата врага на поле игры по оси УxФ 
 	 float yr = 150 + rand() % 350; //случайна€ координата врага на поле игры по оси УyФ   //создаем врагов и помещаем в список 
-	 enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 96, 96, "EasyEnemy"));  
+	 enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 50, 50, "EasyEnemy"));  
 	 enemiesCount += 1; //увеличили счЄтчик врагов  
 }
 
@@ -375,43 +375,17 @@ text.setStyle(Text::Bold);//жирный текст.
 
 		 p.update(time); //оживл€ем объект УpФ класса УPlayerФ с помощью времени sfml, 
 		 // передава€ врем€ в качестве параметра функции update.
-
-		 for (it = enemies.begin(); it != enemies.end(); it++)//проходимс€ по эл-там списка
+        //—“олкновение врагов
+		for (it = enemies.begin(); it != enemies.end(); it++)//проходимс€ по эл-там списка
 		{
-			if ((*it)->getRect().intersects(p.getRect()))//если пр€моугольник спрайта объекта пересекаетс€ с игроком
-			{
-				if ((*it)->name == "EasyEnemy"){//и при этом им€ объекта EasyEnemy,то..
-					if ((*it)->dx>0)//если враг идет вправо
-					{
-						std::cout << "(*it)->x" << (*it)->x << "\n";//коорд игрока
-						std::cout << "p.x" << p.x << "\n\n";//коорд врага
- 
-						(*it)->x = p.x - (*it)->w; //отталкиваем его от игрока влево (впритык)
-						(*it)->dx = 0;//останавливаем
- 
-						std::cout << "new (*it)->x" << (*it)->x << "\n";//нова€ коорд врага
-						std::cout << "new p.x" << p.x << "\n\n";//нова€ коорд игрока (останетс€ прежней)
-					}
-					if ((*it)->dx < 0)//если враг идет влево
-					{
-						(*it)->x = p.x + p.w; //аналогично - отталкиваем вправо
-						(*it)->dx = 0;//останавливаем
-					}
-
-					//выталкивание игрока
-					//if (p.dx < 0) { p.x = (*it)->x + (*it)->w;  }//если столкнулись с врагом и игрок идет влево то выталкиваем игрока
-					//if (p.dx > 0) { p.x = (*it)->x - p.w; }//если столкнулись с врагом и игрок идет вправо то выталкиваем игрока
-				}
-			}
 			for (it2 = enemies.begin(); it2 != enemies.end(); it2++){
 				if ((*it)->getRect() != (*it2)->getRect())//при этом это должны быть разные пр€моугольники
 				if (((*it)->getRect().intersects((*it2)->getRect())) && ((*it)->name == "EasyEnemy") && ((*it2)->name == "EasyEnemy"))//если столкнулись два объекта и они враги
 				{
-					(*it)->dx *= -1;//мен€ем направление движени€ врага
-					(*it)->sprite.scale(-1, 1);//отражаем спрайт по горизонтали
+					(*it)->dx *= -1;//мен€ем направление движени€ врага	
 				}
 			}
-		}
+		} 
 
 
 		 for (it = enemies.begin(); it != enemies.end();)//говорим что проходимс€ от начала до конца
