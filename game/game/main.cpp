@@ -47,10 +47,11 @@ text.setStyle(Text::Bold);//жирный текст.
 
 	std::list<Entity*>  enemies; //список врагов  
 	std::list<Entity*>  Bullets; //список пуль
+	std::list<Entity*>  Bulletsenemy;
 	std::list<Entity*>::iterator it; //итератор чтобы проходить по элементам списка 
 	std::list<Entity*>::iterator it2;
  
- const int ENEMY_COUNT = 3; //максимальное количество врагов в игре  
+ const int ENEMY_COUNT = 1; //максимальное количество врагов в игре  
  int enemiesCount = 0;      //текущее количество врагов в игре 
  
  //Заполняем список объектами врагами  
@@ -76,16 +77,21 @@ text.setStyle(Text::Bold);//жирный текст.
 		time = time / 800; //скорость игры  
 
 		createObjectForMapTimer += time;//наращиваем таймер   
-		//if (createObjectForMapTimer>3000){    
-			//randomMapGenerate();//генерация  камней   
-			//createObjectForMapTimer = 0;//обнуляем таймер   
- //}
+		if (createObjectForMapTimer>1000){    
+			//randomMapGenerate();//генерация  камней 
+			for (it = enemies.begin(); it != enemies.end(); it++){
+		 if((*it)->life){
+					Bulletsenemy.push_back(new Bullet(BulletImage, (*it)->x, (*it)->y, 16, 16, "Bullet", (*it)->state));
+		}
+	}
+			createObjectForMapTimer = 0;//обнуляем таймер   
+ }
 		    
 		 sf::Event event;   
 		 while (window.pollEvent(event))  
 			 {    
 				 if (event.type == sf::Event::Closed)    
-				 window.close();    
+				 window.close();   
 
 		 //стреляем по нажатию клавиши "P"   
 		 if (event.type == sf::Event::KeyPressed)
@@ -100,6 +106,7 @@ text.setStyle(Text::Bold);//жирный текст.
 		 p.update(time); //оживляем объект “p” класса “Player” с помощью времени sfml, 
 		 // передавая время в качестве параметра функции update.
         //СТолкновение врагов
+
 		for (it = enemies.begin(); it != enemies.end(); it++)//проходимся по эл-там списка
 		{
 			for (it2 = enemies.begin(); it2 != enemies.end(); it2++){
@@ -134,6 +141,21 @@ text.setStyle(Text::Bold);//жирный текст.
 				}
 			}
 		}
+		 //Проверка пересечения игрока с пулей 
+		 //Если пересечение произошло, то "health = -50" 
+		  
+		 if (p.life == true){//если игрок жив 
+				for (it = Bulletsenemy.begin(); it != Bulletsenemy.end(); it++){
+					//бежим по списку пуль   
+				if (p.getRect().intersects((*it)->getRect())){
+					(*it)->life=0;
+						if(((*it)->name == "Bullet")){
+						p.health -= 50;
+						}
+					} 
+				}   
+			}
+		 
 		 //оживляем врагов  
 		 for (it = enemies.begin(); it != enemies.end(); it++)   {  
 			 (*it)->update(time); //запускаем метод update() 
@@ -144,6 +166,10 @@ text.setStyle(Text::Bold);//жирный текст.
 		 for (it = Bullets.begin(); it != Bullets.end(); it++)   {
 			 (*it)->update(time); //запускаем метод update()   
 		 } 
+		 //оживляем пули   
+		 for (it = Bulletsenemy.begin(); it != Bulletsenemy.end(); it++)   {
+			 (*it)->update(time); //запускаем метод update()   
+		 }
  
   //Проверяем список на наличие "мертвых" пуль и удаляем их 
 		 for (it = Bullets.begin(); it != Bullets.end(); )//говорим что проходимся от начала до конца 
@@ -158,6 +184,13 @@ text.setStyle(Text::Bold);//жирный текст.
 			 if ((*it)-> life == false) { it = enemies.erase(it); }    
 			 else  it++;//и идем курсором (итератором) к след объекту.    
 } 
+		 //Проверяем список на наличие "мертвых" пуль и удаляем их 
+		 for (it = Bulletsenemy.begin(); it != Bulletsenemy.end(); )//говорим что проходимся от начала до конца 
+		 {
+			 // если этот объект мертв, то удаляем его   
+			 if ((*it)-> life == false) { it = Bulletsenemy.erase(it); }    
+			 else  it++;//и идем курсором (итератором) к след объекту.    
+}
 	
 //Проверка пересечения игрока с врагами 
 		 //Если пересечение произошло, то "health = 0", игрок обездвижевается и  
@@ -203,6 +236,11 @@ text.setStyle(Text::Bold);//жирный текст.
  } 
   //рисуем пули  
   for (it = Bullets.begin(); it != Bullets.end(); it++)   {   
+	  if ((*it)->life) //если пули живы    
+		  window.draw((*it)->sprite); //рисуем объекты  
+ }
+  //рисуем пули  
+  for (it = Bulletsenemy.begin(); it != Bulletsenemy.end(); it++)   {   
 	  if ((*it)->life) //если пули живы    
 		  window.draw((*it)->sprite); //рисуем объекты  
  }

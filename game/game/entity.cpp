@@ -34,6 +34,7 @@ FloatRect Entity::getRect(){//метод получения прямоугольника. его коорд, размеры
 Player::Player(Image &image, float X, float Y, int W, int H, std::string Name) :Entity(image, X, Y, W, H, Name){ 
 			 playerScore = 0;
 			 state = stay;
+			 health=100;
 			 if (name == "Player1"){   
 				 //Задаем спрайту один прямоугольник для   
 				 //вывода одного игрока. IntRect – для приведения типов		
@@ -191,6 +192,7 @@ Player::Player(Image &image, float X, float Y, int W, int H, std::string Name) :
 		  switch (direction)//делаются различные действия в зависимости от состояния
 		  { 
 			case 0:{//состояние идти вправо  
+				state=right;
 				dx = speed;  
 				CurrentFrame += 0.005*time;  
 				if (CurrentFrame > 3) CurrentFrame -= 3;   
@@ -198,6 +200,7 @@ Player::Player(Image &image, float X, float Y, int W, int H, std::string Name) :
 				break;  
 				   } 
 			case 1:{//состояние идти влево 
+				state=left;
 				dx = -speed;   
 				CurrentFrame += 0.005*time; 
 				if (CurrentFrame > 3) CurrentFrame -= 3; 
@@ -205,13 +208,15 @@ Player::Player(Image &image, float X, float Y, int W, int H, std::string Name) :
 				break; 
 				   }  
 			case 2:{//идти вверх   
+				state=up;
 				dy = -speed;  
 				CurrentFrame += 0.005*time;  
 				if (CurrentFrame > 3) CurrentFrame -= 3; 
 				sprite.setTextureRect(IntRect(65 * int(CurrentFrame), 50, 50, 50));  
 				break; 
 				   }
-			case 3:{//идти вниз   
+			case 3:{//идти вниз
+				state=down;
 				dy = speed; 
 				CurrentFrame += 0.005*time;  
 				if (CurrentFrame > 3) CurrentFrame -= 3;
