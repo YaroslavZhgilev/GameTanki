@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp> 
+#include <SFML/Audio.hpp>
 #include <iostream> 
 #include <cmath> 
 #include <sstream> 
@@ -17,7 +18,6 @@ int DeadEnemyGame=0;
 //Создаём окно 
 sf::VideoMode desktop = sf::VideoMode::getDesktopMode(); 
 sf::RenderWindow window(sf::VideoMode(800, 640, desktop.bitsPerPixel), "Lesson 6"); 
-
 
 Font font;//шрифт 
 font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта 
@@ -53,6 +53,18 @@ std::list<Entity*> Bullets; //список пуль
 std::list<Entity*> Bulletsenemy;//список пуль врага 
 std::list<Entity*>::iterator it; //итератор чтобы проходить по элементам списка 
 std::list<Entity*>::iterator it2; 
+
+Music music;
+music.openFromFile("music.ogg");
+music.play();
+
+SoundBuffer UdarBuffer;//создаём буфер для звука
+UdarBuffer.loadFromFile("Udar.ogg");//загружаем в него звук
+Sound Udar(UdarBuffer);//создаем звук и загружаем в него звук из буфера
+
+SoundBuffer shootBuffer;//создаём буфер для звука
+shootBuffer.loadFromFile("shoot.ogg");//загружаем в него звук
+Sound shoot(shootBuffer);//создаем звук и загружаем в него звук из буфера
 
 const int ENEMY_COUNT = 1; //максимальное количество врагов в игре 
 int enemiesCount = 0; //текущее количество врагов в игре 
@@ -117,6 +129,7 @@ if (event.type == sf::Event::KeyPressed)
 if (event.key.code == sf::Keyboard::Space) 
 { 
 Bullets.push_back(new Bullet(BulletImage, p.x, p.y, 16, 16, "Bullet", p.state)); 
+shoot.play();
 } 
 } 
 } 
@@ -167,7 +180,8 @@ for (it2 = Bullets.begin(); it2 != Bullets.end(); it2++)//проходимся по эл-там с
 for (it = Bulletsenemy.begin(); it != Bulletsenemy.end(); it++){ 
 if ((*it)->getRect().intersects((*it2)->getRect()))//если прямоугольник спрайта объекта пересекается с игроком 
 { (*it2)->life=0; 
-(*it)->life=0; 
+(*it)->life=0;
+Udar.play();
 } 
 } 
 } 
