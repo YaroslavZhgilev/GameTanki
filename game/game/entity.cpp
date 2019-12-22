@@ -20,10 +20,10 @@ using namespace sf;
 	 texture.loadFromImage(image); //заносим наше изображение в текстуру 
 	 sprite.setTexture(texture); //заливаем спрайт текстурой 
  } 
-//Entity::~Entity(){
-//	std::cout<<"udalilas sysnost";
-	//		  system("pause");
-//}
+Entity::~Entity(){
+	std::cout<<"udalilas sysnost";
+			  system("pause");
+}
 
  
 FloatRect Entity::getRect(){//метод получения прямоугольника. его коорд, размеры (шир,высот). 
@@ -46,11 +46,11 @@ Player::Player(Image &image, float X, float Y, int W, int H, std::string Name) :
 				 sprite.setTextureRect(IntRect(0, 0, w, h));  
 			 }  
 		 }
-//Player::~Player(){
-	//std::cout<<"udalilas igrok";
-		//	  system("pause");
+Player::~Player(){
+	std::cout<<"udalilas igrok";
+			  system("pause");
 
-//}
+}
 
 
 		 void Player::control(){    
@@ -169,10 +169,10 @@ Player::Player(Image &image, float X, float Y, int W, int H, std::string Name) :
 		} 
 	} 
 
-	//Enemy::~Enemy(){
-		//std::cout<<"udalilas vrag";
-		//	  system("pause");
-	//}
+	Enemy::~Enemy(){
+		std::cout<<"udalilas vrag";
+			  system("pause");
+	}
  
  void Enemy::checkCollisionWithMap(float Dx, float Dy)//ф-ция проверки столкновений с картой 
  {  
@@ -262,10 +262,10 @@ Player::Player(Image &image, float X, float Y, int W, int H, std::string Name) :
 			 w = h = 40; //размеры изображения пули   
 			 life = true; //пуля жива 
 		 } 
-		 //Bullet::~Bullet(){
-			 //std::cout<<"udalilas pyla";
-			//  system("pause");
-		 //}
+		 Bullet::~Bullet(){
+			 std::cout<<"udalilas pyla";
+			  system("pause");
+		 }
  
  
  void Bullet::update(float time)  {   

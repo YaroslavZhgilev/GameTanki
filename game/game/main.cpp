@@ -94,15 +94,15 @@ text.setStyle(Text::Bold);//жирный текст.
 		if(enemyTimer>5000){
 		const int ENEMY_COUNT = 1; //максимальное количество врагов в игре  
         int enemiesCount = 0;      //текущее количество врагов в игре 
- //«аполн€ем список объектами врагами  
- for (int i = 0; i < ENEMY_COUNT; i++)  {
-	 float xr = 250 + rand() % 100; //случайна€ координата врага на поле игры по оси УxФ 
-	 float yr = 150 + rand() % 150; //случайна€ координата врага на поле игры по оси УyФ   //создаем врагов и помещаем в список 
-	 enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 50, 50, "EasyEnemy"));  
-	 enemiesCount += 1; //увеличили счЄтчик врагов 
-	}
-	enemyTimer=0;
-		}
+				//«аполн€ем список объектами врагами  
+					for (int i = 0; i < ENEMY_COUNT; i++)  {
+						float xr = 250 + rand() % 100; //случайна€ координата врага на поле игры по оси УxФ 
+						float yr = 150 + rand() % 150; //случайна€ координата врага на поле игры по оси УyФ   //создаем врагов и помещаем в список 
+							 enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 50, 50, "EasyEnemy"));  
+							 enemiesCount += 1; //увеличили счЄтчик врагов 
+						}
+						enemyTimer=0;
+					}
 		    
 		 sf::Event event;   
 		 while (window.pollEvent(event))  
@@ -113,7 +113,7 @@ text.setStyle(Text::Bold);//жирный текст.
 		 //стрел€ем по нажатию клавиши "P"   
 		 if (event.type == sf::Event::KeyPressed)
 		 {
-			 if (event.key.code == sf::Keyboard::P)
+			 if (event.key.code == sf::Keyboard::Space)
 			 {
 				 Bullets.push_back(new Bullet(BulletImage, p.x, p.y, 16, 16, "Bullet", p.state));    
 			 } 
@@ -205,7 +205,7 @@ text.setStyle(Text::Bold);//жирный текст.
 		 for (it = Bullets.begin(); it != Bullets.end(); )//говорим что проходимс€ от начала до конца 
 		 {
 			 // если этот объект мертв, то удал€ем его   
-			 if ((*it)-> life == false) { it = Bullets.erase(it); }    
+			 if ((*it)-> life == false) { it = Bullets.erase(it);}    
 			 else  it++;//и идем курсором (итератором) к след объекту.    
 } 
 		 //ѕровер€ем список на наличие мертвых вргаов 
@@ -216,10 +216,10 @@ text.setStyle(Text::Bold);//жирный текст.
 			 else  it++;//и идем курсором (итератором) к след объекту.    
 } 
 		 //ѕровер€ем список на наличие "мертвых" пуль врага и удал€ем их 
-		 for (it = Bulletsenemy.begin(); it != Bulletsenemy.end(); )//говорим что проходимс€ от начала до конца 
+		 for (it = Bulletsenemy.begin(); it != Bulletsenemy.end();)//говорим что проходимс€ от начала до конца 
 		 {
 			 // если этот объект мертв, то удал€ем его   
-			 if ((*it)-> life == false) { it = Bulletsenemy.erase(it); }    
+			 if ((*it)-> life == false) { it = Bulletsenemy.erase(it);}    
 			 else  it++;//и идем курсором (итератором) к след объекту.    
 }
 	
@@ -231,7 +231,7 @@ text.setStyle(Text::Bold);//жирный текст.
 					//бежим по списку врагов   
 					if ((p.getRect().intersects((*it)->getRect())) && ((*it)->name == "EasyEnemy")){
 						p.health = 0;
-					} 
+				} 
 				}   
 }
 

@@ -15,7 +15,7 @@ public:  enum { left, right, up, down, stay} state;// тип перечисления - состоян
 		 float CurrentFrame;//хранит текущий кадр 
 		 std::string name;//враги могут быть разные, врагов можно различать по именам  //каждому можно дать свое действие в update() в зависимости от имени
 		 Entity(Image &image, float X, float Y, int W, int H, std::string Name);
-		 //virtual ~Entity();
+		 virtual ~Entity();
     FloatRect getRect();
 	virtual void update(float time) = 0;
 };
@@ -25,7 +25,7 @@ public:
 		 int playerScore;//новая переменная, хранящая очки игр //направление (direction) движения игрока
 
 		 Player(Image &image, float X, float Y, int W, int H, std::string Name);
-		 //~Player();
+		 ~Player();
 		 void control();
 		 void update(float time);
 		 void checkCollisionWithMap(float Dx, float Dy);
@@ -36,7 +36,7 @@ public:
 	int direction;//направление движения врага 
 	
 	Enemy(Image &image, float X, float Y, int W, int H, std::string Name);
-	//~Enemy();
+	~Enemy();
 	void checkCollisionWithMap(float Dx, float Dy);
 	void update(float time);
 };
@@ -44,7 +44,7 @@ public:
 	class Bullet :public Entity{//класс пули 
 public:  int direction;//направление пули 
 		 Bullet(Image &image, float X, float Y, int W, int H, std::string  Name, int dir);
-		 //~Bullet();
+		 ~Bullet();
 		 void update(float time);
 	};
 #endif
