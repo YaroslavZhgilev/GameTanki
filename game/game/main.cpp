@@ -11,13 +11,13 @@
 #include <ctime>
  
 using namespace sf;//включаем пространство имен sf, чтобы постоянно не писать 
+
 bool startGame(){
 	srand(time(NULL));
 		int DeadEnemyGame=0;
 		//Создаём окно 
 		sf::VideoMode desktop = sf::VideoMode::getDesktopMode();  
-		sf::RenderWindow window(sf::VideoMode(800, 640, desktop.bitsPerPixel), "Lesson 6");
-		//RenderWindow window(sf::VideoMode(1376, 768), "))");
+		sf::RenderWindow window(sf::VideoMode(800, 640, desktop.bitsPerPixel), "Tanchik");
 	    menu(window);//вызов меню
 
 		Font font;//шрифт 
@@ -288,7 +288,7 @@ window.clear(); //Очищаем экран
 /////////////////////////////Рисуем карту///////////////////// 
 	for (int i = 0; i < HEIGHT_MAP; i++) 
 		for (int j = 0; j < WIDTH_MAP; j++) { 
-			if (TileMap[i][j] == ' ') s_map.setTextureRect(IntRect(64, 0, 32, 32)); //если 
+			if (TileMap[i][j] == ' ') s_map.setTextureRect(IntRect(50, 0, 32, 32)); //если 
 			//встретили символ пробел, то рисуем 1-й квадратик 
 			if ((TileMap[i][j] == '0')) s_map.setTextureRect(IntRect(0, 0, 32, 32));//если 
 			//встретили символ 0, то рисуем 3й квадратик 
