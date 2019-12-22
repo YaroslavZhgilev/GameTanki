@@ -75,16 +75,17 @@ bool startGame(){
 		Music music;
 		music.openFromFile("music.ogg");
 		music.play();
+		music.setVolume(50);
 
-		SoundBuffer UdarBuffer;//создаём буфер для звука
-		UdarBuffer.loadFromFile("Udar.ogg");//загружаем в него звук
-		Sound Udar(UdarBuffer);//создаем звук и загружаем в него звук из буфера
+		SoundBuffer hitBuffer;//создаём буфер для звука
+		hitBuffer.loadFromFile("hit.ogg");//загружаем в него звук
+		Sound hit(hitBuffer);//создаем звук и загружаем в него звук из буфера
 
 		SoundBuffer shootBuffer;//создаём буфер для звука
 		shootBuffer.loadFromFile("shoot.ogg");//загружаем в него звук
 		Sound shoot(shootBuffer);//создаем звук и загружаем в него звук из буфера
 
-	const int ENEMY_COUNT = 2; //максимальное количество врагов в игре 
+	const int ENEMY_COUNT = 1; //максимальное количество врагов в игре 
 	int enemiesCount = 0; //текущее количество врагов в игре 
 	//Заполняем список объектами врагами 
 	for (int i = 0; i < ENEMY_COUNT; i++) { 
@@ -129,8 +130,7 @@ bool startGame(){
 								//randomMapGenerate();//генерация камней 
 							for (it = enemies.begin(); it != enemies.end(); it++){ 
 									if((*it)->life){ 
-									Bulletsenemy.push_back(new Bullet(BulletImage, (*it)->x, (*it)->y, 16, 16, "Bullet", (*it)->state));
-									shoot.play();
+									Bulletsenemy.push_back(new Bullet(BulletImage, (*it)->x, (*it)->y, 16, 16, "Bullet", (*it)->state));								
 									} 
 								} 
 						createObjectForMapTimer = 0;//обнуляем таймер 
@@ -155,7 +155,7 @@ bool startGame(){
 						if (event.type == sf::Event::Closed) 
 						window.close(); 
 
-//стреляем по нажатию клавиши "P" 
+//стреляем по нажатию клавиши "Space" 
 				if (event.type == sf::Event::KeyPressed) 
 					{ 
 					if (event.key.code == sf::Keyboard::Space) 
@@ -226,7 +226,7 @@ bool startGame(){
 						(*it)->life=0; 
 						if(((*it)->name == "Bullet")){ 
 						p.health -= 50; 
-						Udar.play();
+						hit.play();
 							} 
 						} 
 					} 
@@ -278,6 +278,7 @@ bool startGame(){
 		//бежим по списку врагов 
 		if ((p.getRect().intersects((*it)->getRect())) && ((*it)->name == "EasyEnemy")){ 
 			p.health = 0; 
+			hit.play();
 		} 
 	} 
 } 
