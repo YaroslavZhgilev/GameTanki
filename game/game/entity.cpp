@@ -259,7 +259,7 @@ Player::Player(Image &image, float X, float Y, int W, int H, std::string Name) :
 			 y = Y;  
 			 direction = dir; //направление полета пули   
 			 speed = 0.8; 
-			 w = h = 16; //размеры изображения пули   
+			 w = h = 40; //размеры изображения пули   
 			 life = true; //пуля жива 
 		 } 
 		 //Bullet::~Bullet(){

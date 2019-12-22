@@ -51,7 +51,7 @@ text.setStyle(Text::Bold);//жирный текст.
 	std::list<Entity*>::iterator it; //итератор чтобы проходить по элементам списка 
 	std::list<Entity*>::iterator it2;
  
- const int ENEMY_COUNT = 3; //максимальное количество врагов в игре  
+ const int ENEMY_COUNT = 1; //максимальное количество врагов в игре  
  int enemiesCount = 0;      //текущее количество врагов в игре 
  //Заполняем список объектами врагами  
  for (int i = 0; i < ENEMY_COUNT; i++)  {
