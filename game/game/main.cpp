@@ -6,11 +6,14 @@
 #include "entity.h"
 #include "random.h"
 #include <list>
+#include <ctime>
  
 using namespace sf;//включаем пространство имен sf, чтобы постоянно не писать 
 
 
 int main() {
+	srand(time(NULL));
+	int DeadEnemyGame=0;
 	//Создаём окно 
 	sf::VideoMode desktop = sf::VideoMode::getDesktopMode();  
 	sf::RenderWindow window(sf::VideoMode(800, 640, desktop.bitsPerPixel), "Lesson 6"); 
@@ -20,7 +23,7 @@ Font font;//шрифт
 font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта  
 Text text("", font, 20);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);
 //сам объект текст (не строка)  
-text.setColor(Color::Red);//покрасили текст в красный. если убрать эту строку, то по умолчанию он белый  
+text.setColor(Color::Green);//покрасили текст в красный. если убрать эту строку, то по умолчанию он белый  
 text.setStyle(Text::Bold);//жирный текст.
 
 	Image map_image;//объект изображения для карты 
@@ -51,18 +54,19 @@ text.setStyle(Text::Bold);//жирный текст.
 	std::list<Entity*>::iterator it; //итератор чтобы проходить по элементам списка 
 	std::list<Entity*>::iterator it2;
  
- const int ENEMY_COUNT = 3; //максимальное количество врагов в игре  
+ const int ENEMY_COUNT = 1; //максимальное количество врагов в игре  
  int enemiesCount = 0;      //текущее количество врагов в игре 
  //Заполняем список объектами врагами  
  for (int i = 0; i < ENEMY_COUNT; i++)  {
 	 float xr = 250 + rand() % 100; //случайная координата врага на поле игры по оси “x” 
-	 float yr = 250 + rand() % 150; //случайная координата врага на поле игры по оси “y”   //создаем врагов и помещаем в список 
+	 float yr = 150 + rand() % 150; //случайная координата врага на поле игры по оси “y”   //создаем врагов и помещаем в список 
 	 enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 50, 50, "EasyEnemy"));  
 	 enemiesCount += 1; //увеличили счётчик врагов 
 	}
  
 
-	int createObjectForMapTimer = 0;//Переменная под время для генерирования камней 
+	int createObjectForMapTimer = 0;//Переменная под время для генерирования камней
+	int enemyTimer=0;//Переменная под время для генерации врагов 
 
  while (window.isOpen())  //Пока окно открыто  
 	{   
@@ -86,6 +90,19 @@ text.setStyle(Text::Bold);//жирный текст.
 	}
 			createObjectForMapTimer = 0;//обнуляем таймер   
  }
+		enemyTimer+=time;
+		if(enemyTimer>5000){
+		const int ENEMY_COUNT = 1; //максимальное количество врагов в игре  
+        int enemiesCount = 0;      //текущее количество врагов в игре 
+ //Заполняем список объектами врагами  
+ for (int i = 0; i < ENEMY_COUNT; i++)  {
+	 float xr = 250 + rand() % 100; //случайная координата врага на поле игры по оси “x” 
+	 float yr = 150 + rand() % 150; //случайная координата врага на поле игры по оси “y”   //создаем врагов и помещаем в список 
+	 enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 50, 50, "EasyEnemy"));  
+	 enemiesCount += 1; //увеличили счётчик врагов 
+	}
+	enemyTimer=0;
+		}
 		    
 		 sf::Event event;   
 		 while (window.pollEvent(event))  
@@ -178,11 +195,12 @@ text.setStyle(Text::Bold);//жирный текст.
 		 for (it = Bullets.begin(); it != Bullets.end(); it++)   {
 			 (*it)->update(time); //запускаем метод update()   
 		 } 
-		 //оживляем пули   
+		 //оживляем пули врага  
 		 for (it = Bulletsenemy.begin(); it != Bulletsenemy.end(); it++)   {
 			 (*it)->update(time); //запускаем метод update()   
 		 }
  
+
   //Проверяем список на наличие "мертвых" пуль и удаляем их 
 		 for (it = Bullets.begin(); it != Bullets.end(); )//говорим что проходимся от начала до конца 
 		 {
@@ -190,13 +208,14 @@ text.setStyle(Text::Bold);//жирный текст.
 			 if ((*it)-> life == false) { it = Bullets.erase(it); }    
 			 else  it++;//и идем курсором (итератором) к след объекту.    
 } 
+		 //Проверяем список на наличие мертвых вргаов 
 		 for (it = enemies.begin(); it != enemies.end(); )//говорим что проходимся от начала до конца 
 		 {
 			 // если этот объект мертв, то удаляем его   
-			 if ((*it)-> life == false) { it = enemies.erase(it); }    
+			 if ((*it)-> life == false) { it = enemies.erase(it); DeadEnemyGame++;}    
 			 else  it++;//и идем курсором (итератором) к след объекту.    
 } 
-		 //Проверяем список на наличие "мертвых" пуль и удаляем их 
+		 //Проверяем список на наличие "мертвых" пуль врага и удаляем их 
 		 for (it = Bulletsenemy.begin(); it != Bulletsenemy.end(); )//говорим что проходимся от начала до конца 
 		 {
 			 // если этот объект мертв, то удаляем его   
@@ -207,15 +226,14 @@ text.setStyle(Text::Bold);//жирный текст.
 //Проверка пересечения игрока с врагами 
 		 //Если пересечение произошло, то "health = 0", игрок обездвижевается и  
 		 //выводится сообщение "you are lose" 
-		// if (p.life == true){//если игрок жив 
-				//for (it = enemies.begin(); it != enemies.end(); it++){
+		 if (p.life == true){//если игрок жив 
+				for (it = enemies.begin(); it != enemies.end(); it++){
 					//бежим по списку врагов   
-				//	if ((p.getRect().intersects((*it)->getRect())) && ((*it)->name == "EasyEnemy")){
-					//	p.health = 0;
-					//	std::cout << "you are lose"; 
-					//} 
-				//}   
- //}
+					if ((p.getRect().intersects((*it)->getRect())) && ((*it)->name == "EasyEnemy")){
+						p.health = 0;
+					} 
+				}   
+}
 
   window.clear(); //Очищаем экран   
 
@@ -235,10 +253,10 @@ text.setStyle(Text::Bold);//жирный текст.
   window.draw(s_map);//рисуем квадратики на экран 
 	  }
 
-	  std::ostringstream playerHealthString, gameTimeString;//объявили переменную здоровья и времени 
-	  playerHealthString << p.health; gameTimeString << gameTime;//формируем строку 
-	  text.setString("Здоровье: " + playerHealthString.str() + "\nВремя игры: " + gameTimeString.str());//задаем строку тексту 
-	  text.setPosition(50, 50);//задаем позицию текста 
+	  std::ostringstream playerHealthString, gameTimeString,enemyDead;//объявили переменную здоровья и времени 
+	  playerHealthString << p.health; gameTimeString << gameTime;enemyDead<<DeadEnemyGame;//формируем строку 
+	  text.setString("Здоровье: " + playerHealthString.str() + "\nВремя игры: " + gameTimeString.str()+"\nУбито врагов:"+enemyDead.str());//задаем строку тексту 
+	  text.setPosition(0, 0);//задаем позицию текста 
 	  window.draw(text);//рисуем этот текст
 
   window.draw(p.sprite);//рисуем объект 
