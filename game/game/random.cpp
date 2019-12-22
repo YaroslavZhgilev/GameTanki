@@ -14,7 +14,7 @@ int countStone = 5;//количество камней
  
  if (TileMap[randomElementY][randomElementX] == ' ') {
 	 //если встретили символ пробел, 
-	 TileMap[randomElementY][randomElementX] = 's';  //то ставим туда камень.    
+	 TileMap[randomElementY][randomElementX] = 'h';  //то ставим туда камень.    
 	 countStone--; 
 	 } 
 	} 

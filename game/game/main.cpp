@@ -6,18 +6,19 @@
 #include "map.h" //подключили код с картой 
 #include "entity.h"
 #include "random.h"
+#include "gmenu.h"
 #include <list>
 #include <ctime>
  
 using namespace sf;//включаем пространство имен sf, чтобы постоянно не писать 
-
-
-int main() {
-		srand(time(NULL));
+bool startGame(){
+	srand(time(NULL));
 		int DeadEnemyGame=0;
 		//Создаём окно 
 		sf::VideoMode desktop = sf::VideoMode::getDesktopMode();  
-		sf::RenderWindow window(sf::VideoMode(800, 640, desktop.bitsPerPixel), "Lesson 6"); 
+		sf::RenderWindow window(sf::VideoMode(800, 640, desktop.bitsPerPixel), "Lesson 6");
+		//RenderWindow window(sf::VideoMode(1376, 768), "))");
+	    menu(window);//вызов меню
 
 		Font font;//шрифт 
 		font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта 
@@ -26,9 +27,12 @@ int main() {
 		text.setColor(Color::Green);//покрасили текст в красный. если убрать эту строку, то по умолчанию он белый 
 		text.setStyle(Text::Bold);//жирный текст. 
 
-		Image map_image;//объект изображения для карты 
+		Image map_image;//объект изображения для карты,проигрыша,выигрыша
 		map_image.loadFromFile("images/map_new.png");//загружаем файл для карты 
-		Texture map;//текстура карты 
+		Texture map,lose,win;;//текстура карты 
+		lose.loadFromFile("images/enemy.png");
+		win.loadFromFile("images/hero.png");
+		Sprite win1(win),lose1(lose);
 		map.loadFromImage(map_image);//заряжаем текстуру картинкой 
 		Sprite s_map;//создаём спрайт для карты 
 		s_map.setTexture(map);//заливаем текстуру спрайтом 
@@ -66,7 +70,7 @@ int main() {
 		shootBuffer.loadFromFile("shoot.ogg");//загружаем в него звук
 		Sound shoot(shootBuffer);//создаем звук и загружаем в него звук из буфера
 
-	const int ENEMY_COUNT = 1; //максимальное количество врагов в игре 
+	const int ENEMY_COUNT = 2; //максимальное количество врагов в игре 
 	int enemiesCount = 0; //текущее количество врагов в игре 
 	//Заполняем список объектами врагами 
 	for (int i = 0; i < ENEMY_COUNT; i++) { 
@@ -79,9 +83,17 @@ int main() {
 
 	int createObjectForMapTimer = 0;//Переменная под время для генерирования камней 
 	int enemyTimer=0;//Переменная под время для генерации врагов 
-
+	randomMapGenerate();
 		while (window.isOpen()) //Пока окно открыто 
 				{ 
+					if (p.playerScore==5){
+						win1.setPosition(0, 0);
+						if (Keyboard::isKeyPressed(Keyboard::Escape)) { return true; }//если таб, то перезагружаем игру
+						 }
+					if (p.health<=0){
+						lose1.setPosition(0, 0);
+						if (Keyboard::isKeyPressed(Keyboard::Escape)) { return true; }//если таб, то перезагружаем игру
+					}
 
 				// дать время с последнего перезапуска часов, в данном случае время, прошедшее с 
 				//предыдущей итерации и вызова restart(); 
@@ -97,7 +109,8 @@ int main() {
 								//randomMapGenerate();//генерация камней 
 							for (it = enemies.begin(); it != enemies.end(); it++){ 
 									if((*it)->life){ 
-									Bulletsenemy.push_back(new Bullet(BulletImage, (*it)->x, (*it)->y, 16, 16, "Bullet", (*it)->state)); 
+									Bulletsenemy.push_back(new Bullet(BulletImage, (*it)->x, (*it)->y, 16, 16, "Bullet", (*it)->state));
+									shoot.play();
 									} 
 								} 
 						createObjectForMapTimer = 0;//обнуляем таймер 
@@ -180,7 +193,6 @@ int main() {
 					if ((*it)->getRect().intersects((*it2)->getRect()))//если прямоугольник спрайта объекта пересекается с игроком 
 						{ (*it2)->life=0; 
 						(*it)->life=0;
-						Udar.play();
 						} 
 					} 
 				} 
@@ -194,6 +206,7 @@ int main() {
 						(*it)->life=0; 
 						if(((*it)->name == "Bullet")){ 
 						p.health -= 50; 
+						Udar.play();
 							} 
 						} 
 					} 
@@ -256,20 +269,17 @@ window.clear(); //Очищаем экран
 		for (int j = 0; j < WIDTH_MAP; j++) { 
 			if (TileMap[i][j] == ' ') s_map.setTextureRect(IntRect(64, 0, 32, 32)); //если 
 			//встретили символ пробел, то рисуем 1-й квадратик 
-			if (TileMap[i][j] == 's') s_map.setTextureRect(IntRect(32, 0, 32, 32));//если 
-			//встретили символ s, то рисуем 2й квадратик 
 			if ((TileMap[i][j] == '0')) s_map.setTextureRect(IntRect(0, 0, 32, 32));//если 
 			//встретили символ 0, то рисуем 3й квадратик 
-			if ((TileMap[i][j] == 'f')) s_map.setTextureRect(IntRect(96, 0, 32, 32));//цветок 
-			if ((TileMap[i][j] == 'h')) s_map.setTextureRect(IntRect(128, 0, 32, 32));//сердце 
+			if ((TileMap[i][j] == 'h')) s_map.setTextureRect(IntRect(150, 0, 32, 32));//сердце 
 			s_map.setPosition(j * 32, i * 32);//раскладываем квадратики в карту. 
 
 window.draw(s_map);//рисуем квадратики на экран 
 } 
 
-	std::ostringstream playerHealthString, gameTimeString,enemyDead;//объявили переменную здоровья и времени 
-	playerHealthString << p.health; gameTimeString << gameTime; enemyDead << DeadEnemyGame;//формируем строку 
-	text.setString("Здоровье: " + playerHealthString.str() + "\nВремя игры: " + gameTimeString.str()+"\nУбито врагов:"+enemyDead.str());//задаем строку тексту 
+	std::ostringstream playerHealthString, gameTimeString,enemyDead,Score;//объявили переменную здоровья и времени 
+	playerHealthString << p.health; gameTimeString << gameTime; enemyDead << DeadEnemyGame;Score<<p.playerScore;//формируем строку 
+	text.setString("Здоровье: " + playerHealthString.str() + "\nВремя игры: " + gameTimeString.str()+"\nУбито врагов:"+enemyDead.str()+"\nСобрано бонусов:"+Score.str());//задаем строку тексту 
 	text.setPosition(0, 0);//задаем позицию текста 
 	window.draw(text);//рисуем этот текст 
 
@@ -290,8 +300,14 @@ window.draw(s_map);//рисуем квадратики на экран
 		} 
 
 window.display(); //Показываем объект на экране 
-} 
+	}
+}
 
-return 0; 
+void gameRunning(){//ф-ция перезагружает игру , если это необходимо
+	if (startGame()) { gameRunning(); }////если startGame() == true, то вызываем занова ф-цию isGameRunning, которая в свою очередь опять вызывает startGame() 
+}
+int main() {
+	gameRunning();	 
+	return 0; 
 }
 

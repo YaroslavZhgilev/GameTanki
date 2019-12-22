@@ -21,8 +21,6 @@ using namespace sf;
 	 sprite.setTexture(texture); //заливаем спрайт текстурой 
  } 
 Entity::~Entity(){
-	std::cout<<"udalilas sysnost";
-			  system("pause");
 }
 
  
@@ -47,8 +45,6 @@ Player::Player(Image &image, float X, float Y, int W, int H, std::string Name) :
 			 }  
 		 }
 Player::~Player(){
-	std::cout<<"udalilas igrok";
-			  system("pause");
 
 }
 
@@ -137,18 +133,10 @@ Player::~Player(){
 						 if (Dx > 0) { x = j * 32 - w; dx = 0; }//с правым краем карты   
 						 if (Dx < 0) { x = j * 32 + 32; dx = 0; }// с левым краем карты 
 					 }   
-					 if (TileMap[i][j] == 's') { 
+					 if (TileMap[i][j] == 'h') { 
 						 playerScore++; //если взяли камень, переменная playerScore=playerScore+1; 
 						 TileMap[i][j] = ' ';  
-							} 
-					 if (TileMap[i][j] == 'f') {  
-						 health -= 40;//если взяли ядовитый цветок,то переменная health=health-40;    
-						 TileMap[i][j] = ' ';//убрали цветок  
-							} 
-					 if (TileMap[i][j] == 'h') {  
-						 health += 20;//если взяли сердечко,то переменная health=health+20; 
-						 TileMap[i][j] = ' ';//убрали сердечко  
-					 }
+							}  
 				 }
 		 }
 
@@ -170,8 +158,6 @@ Player::~Player(){
 	} 
 
 	Enemy::~Enemy(){
-		std::cout<<"udalilas vrag";
-			  system("pause");
 	}
  
  void Enemy::checkCollisionWithMap(float Dx, float Dy)//ф-ция проверки столкновений с картой 
@@ -263,8 +249,6 @@ Player::~Player(){
 			 life = true; //пуля жива 
 		 } 
 		 Bullet::~Bullet(){
-			 std::cout<<"udalilas pyla";
-			  system("pause");
 		 }
  
  
