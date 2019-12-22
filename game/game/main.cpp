@@ -23,17 +23,31 @@ bool startGame(){
 		Font font;//шрифт 
 		font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта 
 		Text text("", font, 20);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях); 
+		Text textwin("",font,70);
+		Text textlose("",font,70);
 		//сам объект текст (не строка) 
-		text.setColor(Color::Green);//покрасили текст в красный. если убрать эту строку, то по умолчанию он белый 
+		textlose.setColor(Color::Red);
+		textlose.setStyle(Text::Bold);
+		textwin.setColor(Color::Green);
+		textwin.setStyle(Text::Bold);
+		text.setColor(Color::White);//покрасили текст в белый. если убрать эту строку, то по умолчанию он белый 
 		text.setStyle(Text::Bold);//жирный текст. 
 
-		Image map_image;//объект изображения для карты,проигрыша,выигрыша
+		Image map_image,winImage,loseImage;//объект изображения для карты,проигрыша,выигрыша
 		map_image.loadFromFile("images/map_new.png");//загружаем файл для карты 
-		Texture map,lose,win;;//текстура карты 
-		lose.loadFromFile("images/enemy.png");
-		win.loadFromFile("images/hero.png");
-		Sprite win1(win),lose1(lose);
+		loseImage.loadFromFile("images/enemy.png");
+		winImage.loadFromFile("images/hero.png");
+
+		Texture map,loseTex,winTex;;//текстура карты 
+		loseTex.loadFromImage(loseImage);
+		winTex.loadFromImage(winImage);
+
+		Sprite winSpr,loseSpr;
 		map.loadFromImage(map_image);//заряжаем текстуру картинкой 
+		winSpr.setTexture(winTex);
+		winSpr.setPosition(0,0);
+		loseSpr.setTexture(loseTex);
+		loseSpr.setPosition(0,0);
 		Sprite s_map;//создаём спрайт для карты 
 		s_map.setTexture(map);//заливаем текстуру спрайтом 
 
@@ -87,11 +101,17 @@ bool startGame(){
 		while (window.isOpen()) //Пока окно открыто 
 				{ 
 					if (p.playerScore==5){
-						win1.setPosition(0, 0);
+						textwin.setString("YOU WIN!!!\nTo exit, press <<esc>>");
+						textwin.setPosition(90, 110);
+						window.draw(textwin);
+						window.display();
 						if (Keyboard::isKeyPressed(Keyboard::Escape)) { return true; }//если таб, то перезагружаем игру
 						 }
 					if (p.health<=0){
-						lose1.setPosition(0, 0);
+						textlose.setString("YOU LOSE!!!\nTo exit, press <<esc>>");
+						textlose.setPosition(90, 110);
+						window.draw(textlose);
+						window.display();
 						if (Keyboard::isKeyPressed(Keyboard::Escape)) { return true; }//если таб, то перезагружаем игру
 					}
 
@@ -306,6 +326,7 @@ window.display(); //Показываем объект на экране
 void gameRunning(){//ф-ция перезагружает игру , если это необходимо
 	if (startGame()) { gameRunning(); }////если startGame() == true, то вызываем занова ф-цию isGameRunning, которая в свою очередь опять вызывает startGame() 
 }
+
 int main() {
 	gameRunning();	 
 	return 0; 
