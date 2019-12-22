@@ -53,21 +53,29 @@ Player::~Player(){
 			 if( Keyboard::isKeyPressed ){
 				if (Keyboard::isKeyPressed(Keyboard::Left)) {     
 					state = left;   
-					speed = 0.1;   
+					speed = 0.1; 
+					dx=0;
+					dy=0;
 				}    
 				if (Keyboard::isKeyPressed(Keyboard::Right)) {     
 					state = right;  
 					speed = 0.1; 
+					dx=0;
+					dy=0;
 				} 
  
 			    if (Keyboard::isKeyPressed(Keyboard::Up)) {    
 					state = up; 
 					speed = 0.1; 
+					dx=0;
+					dy=0;
 				} 
  
 			    if (Keyboard::isKeyPressed(Keyboard::Down)) { 
 					state = down;   
 				    speed = 0.1;  
+					dx=0;
+					dy=0;
 				}  
 		}
  }
@@ -195,7 +203,7 @@ Player::~Player(){
 		  { 
 			case 0:{//состояние идти вправо  
 				state=right;
-				dx = speed;  
+				dx = -speed;
 				CurrentFrame += 0.005*time;  
 				if (CurrentFrame > 3) CurrentFrame -= 3;   
 				sprite.setTextureRect(IntRect(60 * int(CurrentFrame), 0, 50, 50)); 
@@ -203,7 +211,7 @@ Player::~Player(){
 				   } 
 			case 1:{//состояние идти влево 
 				state=left;
-				dx = -speed;   
+				dx = -speed;
 				CurrentFrame += 0.005*time; 
 				if (CurrentFrame > 3) CurrentFrame -= 3; 
 				sprite.setTextureRect(IntRect(65 * int(CurrentFrame), 150, 50, 60)); 
