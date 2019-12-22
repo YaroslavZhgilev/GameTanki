@@ -47,20 +47,20 @@ text.setStyle(Text::Bold);//жирный текст.
 
 	std::list<Entity*>  enemies; //список врагов  
 	std::list<Entity*>  Bullets; //список пуль
-	std::list<Entity*>  Bulletsenemy;
+	std::list<Entity*>  Bulletsenemy;//список пуль врага 
 	std::list<Entity*>::iterator it; //итератор чтобы проходить по элементам списка 
 	std::list<Entity*>::iterator it2;
  
- const int ENEMY_COUNT = 1; //максимальное количество врагов в игре  
+ const int ENEMY_COUNT = 3; //максимальное количество врагов в игре  
  int enemiesCount = 0;      //текущее количество врагов в игре 
- 
  //«аполн€ем список объектами врагами  
  for (int i = 0; i < ENEMY_COUNT; i++)  {
 	 float xr = 250 + rand() % 100; //случайна€ координата врага на поле игры по оси УxФ 
 	 float yr = 250 + rand() % 150; //случайна€ координата врага на поле игры по оси УyФ   //создаем врагов и помещаем в список 
 	 enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 50, 50, "EasyEnemy"));  
-	 enemiesCount += 1; //увеличили счЄтчик врагов  
-}
+	 enemiesCount += 1; //увеличили счЄтчик врагов 
+	}
+ 
 
 	int createObjectForMapTimer = 0;//ѕеременна€ под врем€ дл€ генерировани€ камней 
 
