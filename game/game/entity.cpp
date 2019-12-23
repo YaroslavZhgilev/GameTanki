@@ -45,7 +45,6 @@ Player::Player(Image &image, float X, float Y, int W, int H, std::string Name) :
 			 }  
 		 }
 Player::~Player(){
-
 }
 
 
@@ -91,14 +90,14 @@ Player::~Player(){
 					dx = speed;    
 					CurrentFrame += 0.005*time;   
 					if (CurrentFrame > 3) CurrentFrame -= 3;
-					sprite.setTextureRect(IntRect(60 * int(CurrentFrame), 0, 50, 50)); 
+					sprite.setTextureRect(IntRect(32 * int(CurrentFrame), 0, 32, 32)); 
 				    break; 
 						  }  
 				case left:{//состояние идти влево   
 					dx = -speed;  
 					CurrentFrame += 0.005*time;   
 					if (CurrentFrame > 3) CurrentFrame -= 3;   
-					sprite.setTextureRect(IntRect(65 * int(CurrentFrame),150, 50, 60)); 
+					sprite.setTextureRect(IntRect(32 * int(CurrentFrame),96, 32, 32)); 
 					break;   
 						  }
 
@@ -106,7 +105,7 @@ Player::~Player(){
 					dy = -speed;  
 					CurrentFrame += 0.005*time;    
 					if (CurrentFrame > 3) CurrentFrame -= 3; 
-					sprite.setTextureRect(IntRect(65 * int(CurrentFrame), 50, 50, 50)); 
+					sprite.setTextureRect(IntRect(32 * int(CurrentFrame), 32, 32, 32)); 
 					break; 
 						}
 
@@ -114,7 +113,7 @@ Player::~Player(){
 					dy = speed;   
 					CurrentFrame += 0.005*time;  
 					if (CurrentFrame > 3) CurrentFrame -= 3;    
-					sprite.setTextureRect(IntRect(60 * int(CurrentFrame), 100, 50, 60));
+					sprite.setTextureRect(IntRect(32 * int(CurrentFrame), 64, 32, 32));
 					break; 
 						  }    
 			 }
@@ -206,7 +205,7 @@ Player::~Player(){
 				dx = -speed;
 				CurrentFrame += 0.005*time;  
 				if (CurrentFrame > 3) CurrentFrame -= 3;   
-				sprite.setTextureRect(IntRect(60 * int(CurrentFrame), 0, 50, 50)); 
+				sprite.setTextureRect(IntRect(32 * int(CurrentFrame), 0, 32, 32)); 
 				break;  
 				   } 
 			case 1:{//состояние идти влево 
@@ -214,7 +213,7 @@ Player::~Player(){
 				dx = -speed;
 				CurrentFrame += 0.005*time; 
 				if (CurrentFrame > 3) CurrentFrame -= 3; 
-				sprite.setTextureRect(IntRect(65 * int(CurrentFrame), 150, 50, 60)); 
+				sprite.setTextureRect(IntRect(32 * int(CurrentFrame), 96, 32, 32)); 
 				break; 
 				   }  
 			case 2:{//идти вверх   
@@ -222,7 +221,7 @@ Player::~Player(){
 				dy = -speed;  
 				CurrentFrame += 0.005*time;  
 				if (CurrentFrame > 3) CurrentFrame -= 3; 
-				sprite.setTextureRect(IntRect(65 * int(CurrentFrame), 50, 50, 50));  
+				sprite.setTextureRect(IntRect(32 * int(CurrentFrame), 32, 32, 32));  
 				break; 
 				   }
 			case 3:{//идти вниз
@@ -230,7 +229,7 @@ Player::~Player(){
 				dy = speed; 
 				CurrentFrame += 0.005*time;  
 				if (CurrentFrame > 3) CurrentFrame -= 3;
-				sprite.setTextureRect(IntRect(60 * int(CurrentFrame), 100, 50, 60)); 
+				sprite.setTextureRect(IntRect(32 * int(CurrentFrame), 64, 32, 32)); 
 				break; 
 				   } 
 		  } 

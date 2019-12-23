@@ -33,21 +33,12 @@ bool startGame(){
 		text.setColor(Color::White);//покрасили текст в белый. если убрать эту строку, то по умолчанию он белый 
 		text.setStyle(Text::Bold);//жирный текст. 
 
-		Image map_image,winImage,loseImage;//объект изображения для карты,проигрыша,выигрыша
+		Image map_image;//объект изображения для карты
 		map_image.loadFromFile("images/map_new.png");//загружаем файл для карты 
-		loseImage.loadFromFile("images/enemy.png");
-		winImage.loadFromFile("images/hero.png");
+		map_image.createMaskFromColor(Color(0, 0, 0));
+		Texture map;//текстура карты 
 
-		Texture map,loseTex,winTex;;//текстура карты 
-		loseTex.loadFromImage(loseImage);
-		winTex.loadFromImage(winImage);
-
-		Sprite winSpr,loseSpr;
-		map.loadFromImage(map_image);//заряжаем текстуру картинкой 
-		winSpr.setTexture(winTex);
-		winSpr.setPosition(0,0);
-		loseSpr.setTexture(loseTex);
-		loseSpr.setPosition(0,0);
+		map.loadFromImage(map_image);//заряжаем текстуру картинкой 	
 		Sprite s_map;//создаём спрайт для карты 
 		s_map.setTexture(map);//заливаем текстуру спрайтом 
 
@@ -57,14 +48,16 @@ bool startGame(){
 
 		Image heroImage; 
 		heroImage.loadFromFile("images/hero.png"); // загружаем изображение игрока 
+		heroImage.createMaskFromColor(Color(0, 0, 0));
 
 		Image easyEnemyImage; 
 		easyEnemyImage.loadFromFile("images/enemy.png"); // загружаем изображение врага 
+		 easyEnemyImage.createMaskFromColor(Color(0, 0, 0));
 
 		Image BulletImage;//изображение для пули 
 		BulletImage.loadFromFile("images/bullet.png");//загрузили картинку в объект изображения 
 
-		Player p(heroImage, 50, 50, 50, 50, "Player1");//объект класса игрока 
+		Player p(heroImage, 32, 32, 32, 32, "Player1");//объект класса игрока 
 
 	std::list<Entity*> enemies; //список врагов 
 	std::list<Entity*> Bullets; //список пуль 
@@ -91,10 +84,9 @@ bool startGame(){
 	for (int i = 0; i < ENEMY_COUNT; i++) { 
 		float xr = 250 + rand() % 100; //случайная координата врага на поле игры по оси “x” 
 		float yr = 150 + rand() % 150; //случайная координата врага на поле игры по оси “y” //создаем врагов и помещаем в список 
-			enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 50, 50, "EasyEnemy")); 
+			enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 32, 32, "EasyEnemy")); 
 			enemiesCount += 1; //увеличили счётчик врагов 
 } 
-
 
 	int createObjectForMapTimer = 0;//Переменная под время для генерирования камней 
 	int enemyTimer=0;//Переменная под время для генерации врагов 
@@ -102,18 +94,12 @@ bool startGame(){
 		while (window.isOpen()) //Пока окно открыто 
 				{ 
 					if (p.playerScore==5){
-						textwin.setString("YOU WIN!!!\nTo exit, press <<esc>>");
-						textwin.setPosition(90, 110);
-						window.draw(textwin);
-						window.display();
-						if (Keyboard::isKeyPressed(Keyboard::Escape)) { return true; }//если таб, то перезагружаем игру
+						cout<<"You WIN!!!";
+						return true;
 						 }
 					if (p.health<=0){
-						textlose.setString("YOU LOSE!!!\nTo exit, press <<esc>>");
-						textlose.setPosition(90, 110);
-						window.draw(textlose);
-						window.display();
-						if (Keyboard::isKeyPressed(Keyboard::Escape)) { return true; }//если таб, то перезагружаем игру
+						cout<<"You LOSE(((";
+						return true;
 					}
 
 				// дать время с последнего перезапуска часов, в данном случае время, прошедшее с 
@@ -123,7 +109,7 @@ bool startGame(){
 						//игровое время в секундах идёт вперед, пока жив игрок. 
 						//Перезагружать как time его не надо. оно не обновляет логику игры 
 						clock.restart(); //перезапуск часов 
-						time = time / 800; //скорость игры 
+						time = time / 1000; //скорость игры 
 
 					createObjectForMapTimer += time;//наращиваем таймер 
 						if (createObjectForMapTimer>1000){ 
@@ -143,7 +129,7 @@ bool startGame(){
 					for (int i = 0; i < ENEMY_COUNT; i++) { 
 						float xr = 250 + rand() % 100; //случайная координата врага на поле игры по оси “x”
 						float yr = 150 + rand() % 150; //случайная координата врага на поле игры по оси “y” //создаем врагов и помещаем в список 
-							enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 50, 50, "EasyEnemy")); 
+							enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 32, 32, "EasyEnemy")); 
 							enemiesCount += 1; //увеличили счётчик врагов 
 						} 
 						enemyTimer=0; 
@@ -178,20 +164,11 @@ bool startGame(){
 					{ 
 						(*it)->dx *= -1;//меняем направление движения врага 
 						(*it)->dy *= -1; 
+						(*it2)->dx *= -1;
+						(*it2)->dy *= -1;
 					} 
 				} 
-			} 
-
-
-		for (it = enemies.begin(); it != enemies.end();)//говорим что проходимся от начала до конца 
-			{ 
-				Entity *b = *it;//для удобства, чтобы не писать (*it)-> 
-				//b->update(time);//вызываем ф-цию update для всех объектов (по сути для тех, кто жив) 
-				if (b->life == false) { it = enemies.erase(it); delete b; }// если этот объект мертв, то удаляем его 
-				else it++;//и идем курсором (итератором) к след объекту. так делаем со всеми объектами списка 
-			} 
-
-
+			}
 
 		for (it2 = Bullets.begin(); it2 != Bullets.end(); it2++)//проходимся по эл-там списка 
 			{ 
