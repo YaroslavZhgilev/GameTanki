@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp> 
 #include <SFML/Audio.hpp>
 #include <iostream> 
-#include <cmath> 
 #include <sstream> 
 #include "map.h" //подключили код с картой 
 #include "entity.h"
@@ -13,7 +12,7 @@
 using namespace sf;//включаем пространство имен sf, чтобы посто€нно не писать 
 
 bool startGame(){
-	srand(time(NULL));
+		srand(time(NULL));
 		int DeadEnemyGame=0;
 		//—оздаЄм окно 
 		sf::VideoMode desktop = sf::VideoMode::getDesktopMode();  
@@ -23,13 +22,7 @@ bool startGame(){
 		Font font;//шрифт 
 		font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта 
 		Text text("", font, 20);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пиксел€х); 
-		Text textwin("",font,70);
-		Text textlose("",font,70);
 		//сам объект текст (не строка) 
-		textlose.setColor(Color::Red);
-		textlose.setStyle(Text::Bold);
-		textwin.setColor(Color::Green);
-		textwin.setStyle(Text::Bold);
 		text.setColor(Color::White);//покрасили текст в белый. если убрать эту строку, то по умолчанию он белый 
 		text.setStyle(Text::Bold);//жирный текст. 
 
@@ -88,11 +81,11 @@ bool startGame(){
 			enemiesCount += 1; //увеличили счЄтчик врагов 
 } 
 
-	int createObjectForMapTimer = 0;//ѕеременна€ под врем€ дл€ генерировани€ камней 
+	int createObjectForMapTimer = 0;//ѕеременна€ под врем€ дл€ генерировани€ пуль врага 
 	int enemyTimer=0;//ѕеременна€ под врем€ дл€ генерации врагов 
 	randomMapGenerate();
 		while (window.isOpen()) //ѕока окно открыто 
-				{ 
+				{ //”словие выхода из игры
 					if (p.playerScore==5){
 						cout<<"You WIN!!!";
 						return true;
@@ -127,8 +120,8 @@ bool startGame(){
 				int enemiesCount = 0; //текущее количество врагов в игре 
 				//«аполн€ем список объектами врагами 
 					for (int i = 0; i < ENEMY_COUNT; i++) { 
-						float xr = 250 + rand() % 100; //случайна€ координата врага на поле игры по оси УxФ
-						float yr = 150 + rand() % 150; //случайна€ координата врага на поле игры по оси УyФ //создаем врагов и помещаем в список 
+						float xr = 250 + rand() % 300; //случайна€ координата врага на поле игры по оси УxФ
+						float yr = 250 + rand() % 150; //случайна€ координата врага на поле игры по оси УyФ //создаем врагов и помещаем в список 
 							enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 32, 32, "EasyEnemy")); 
 							enemiesCount += 1; //увеличили счЄтчик врагов 
 						} 
@@ -169,6 +162,7 @@ bool startGame(){
 					} 
 				} 
 			}
+		//ѕроверка пересечени€ пули геро€ с врагом
 
 		for (it2 = Bullets.begin(); it2 != Bullets.end(); it2++)//проходимс€ по эл-там списка 
 			{ 
