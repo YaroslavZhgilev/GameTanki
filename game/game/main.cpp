@@ -17,7 +17,7 @@ bool startGame(){
 		//Создаём окно 
 		sf::VideoMode desktop = sf::VideoMode::getDesktopMode();  
 		sf::RenderWindow window(sf::VideoMode(800, 640, desktop.bitsPerPixel), "Tanchik");
-	    menu(window);//вызов меню
+	     menu(window);//вызов меню
 
 		Font font;//шрифт 
 		font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта 
