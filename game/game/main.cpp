@@ -269,7 +269,7 @@ window.clear(); //Очищаем экран
 			//встретили символ пробел, то рисуем 1-й квадратик 
 			if ((TileMap[i][j] == '0')) s_map.setTextureRect(IntRect(0, 0, 32, 32));//если 
 			//встретили символ 0, то рисуем 3й квадратик 
-			if ((TileMap[i][j] == 'h')) s_map.setTextureRect(IntRect(150, 0, 32, 32));//сердце 
+			if ((TileMap[i][j] == 'h')) s_map.setTextureRect(IntRect(143, 0, 32, 32));//сердце 
 			s_map.setPosition(j * 32, i * 32);//раскладываем квадратики в карту. 
 
 window.draw(s_map);//рисуем квадратики на экран 
