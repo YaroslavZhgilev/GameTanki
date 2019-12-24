@@ -14,17 +14,10 @@ using namespace sf;//включаем пространство имен sf, чтобы постоянно не писать
 bool startGame(){
 		srand(time(NULL));
 		int DeadEnemyGame=0;
-<<<<<<< HEAD
 		//Создаём окно 
 		sf::VideoMode desktop = sf::VideoMode::getDesktopMode();  
 		sf::RenderWindow window(sf::VideoMode(800, 640, desktop.bitsPerPixel), "Tanchik");
 	     menu(window);//вызов меню
-=======
-			//Создаём окно 
-			sf::VideoMode desktop = sf::VideoMode::getDesktopMode();  
-			sf::RenderWindow window(sf::VideoMode(800, 640, desktop.bitsPerPixel), "Tanchik");
-			menu(window);//вызов меню
->>>>>>> develop
 
 		Font font;//шрифт 
 		font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта 
