@@ -1,8 +1,13 @@
 #include "gmenu.h"
 #include <SFML/Graphics.hpp> 
+#include <SFML/Audio.hpp>
 using namespace sf;//включаем пространство имен sf, чтобы постоянно не писать 
 
 void menu(RenderWindow & window) {
+	  Music men;
+		men.openFromFile("men.ogg");
+		men.play();
+		men.setVolume(10);
 	Texture menuTexture1, menuTexture2, menuTexture3, aboutTexture, menuBackground,tank;
 	tank.loadFromFile("images/tank.png");
 	menuTexture1.loadFromFile("images/111.png");
@@ -22,6 +27,7 @@ void menu(RenderWindow & window) {
 	//////////////////////////////МЕНЮ///////////////////
 	while (isMenu)
 	{	
+
 		tank1.setColor(Color::White);
 		menu1.setColor(Color::White);
 		menu2.setColor(Color::White);

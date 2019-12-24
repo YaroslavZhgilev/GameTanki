@@ -68,7 +68,7 @@ bool startGame(){
 		Music music;
 		music.openFromFile("music.ogg");
 		music.play();
-		music.setVolume(50);
+		music.setVolume(10);
 
 		SoundBuffer hitBuffer;//создаём буфер для звука
 		hitBuffer.loadFromFile("hit.ogg");//загружаем в него звук
